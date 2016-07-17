@@ -1,0 +1,105 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Untitled</title>
+        <link rel="stylesheet" href="css/style.css">
+        <link rel="author" href="humans.txt">
+        <style>
+				#box{width: 100px;height: 100px;background: red;position: absolute;}
+				#box2{width: 100px;height: 100px;background: yellow;position: absolute;}
+				#box3{width: 100px;height: 100px;position: absolute;top: 50%;left: 50%;margin-left: -50px;margin-top: -50px;background:pink}
+
+        </style>
+    </head>
+    <body>
+        
+        <script src="js/main.js"></script>
+        <p>132132132132132132</p>
+        <div id="box"></div>
+        <div id="box2"></div>
+        <div id="box3"></div>
+        <script>
+        var box=document.getElementById("box");
+        var box2=document.getElementById("box2");
+        var box3=document.getElementById("box3");
+        window.onload=function(){
+        	
+        	
+        	drag(box,box3);
+        	drag(box2,box3);
+        }
+
+         function drag(obj,obj2){
+        	obj.onmousedown=function(ev){
+        		var that=this;
+
+        		var e=ev||window.event;
+        		var x=e.clientX;
+        		var y=e.clientY;
+        		var disx=x-getPos(this).Left;
+        		var disy=y-getPos(this).Top;
+        		if(obj.setCapture){
+        			obj.setCapture();
+        		}//设置全局捕获
+        		document.onmousemove=function(e){
+        			var e=e||window.event;
+        			var x=e.clientX;
+        			var y=e.clientY;
+        			var L=x-disx;
+        			var T=y-disy;
+        			var L1=obj.offsetWidth;
+        			var T1=obj.offsetHeight;
+        			var T2=getPos(obj2).Top;
+        			var L2=getPos(box3).Left;
+        			var w2=obj2.offsetWidth;
+        			var h2=obj2.offsetHeight;
+        			var R1=L1+L;
+        			var R2=T+T1
+        			if(R1<L2+w2||R1>L2+w2||R2<T2||R2>T2+h2){//根据九宫格的原理以BOX3为中心来判断是否重合;
+        				obj2.style.background="pink"
+        			}else{
+        				obj2.style.background="blue"
+        			}
+        			if(L<100){ //磁性吸附就是更改这个地方的值
+        				L=0;
+        			}
+        			if(L>document.documentElement.clientWidth-that.offsetWidth){
+        				L=document.documentElement.clientWidth-that.offsetWidth
+        			}
+        			if(T<0){
+        				T=0
+        			}
+        			if(T>document.documentElement.clientHeight-that.offsetHeight){
+        				T=document.documentElement.clientHeight-that.offsetHeight
+        			}
+        			that.style.left=L+"px";
+        			that.style.top=T+"px";
+
+        		}
+        	document.onmouseup=function(){
+        		document.onmouseup=null;
+        		document.onmousemove=null;
+        		if(obj.releaseCapture){
+        			obj.releaseCapture();
+        		}
+        		return false;
+        	}
+        	
+        	}
+        }
+        function getPos(obj){
+        	var pos={Left:0,Top:0};
+        	while(obj){
+        		pos.Top+=obj.offsetTop;
+        		pos.Left+=obj.offsetLeft;
+        		obj=obj.offsetParent;
+        	}
+       		return pos;
+        }
+        //setCapture();设置全局捕获，当我们给一个元素设置全局捕获以后，那么这个元素就会监听后续所有发生的事件。当有事件发生的时候，就被会被当前设置了全局捕获的元素所触发，IE：会有效果，火狐和谷歌无效
+
+        </script>
+    </body>
